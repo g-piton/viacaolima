@@ -36,7 +36,7 @@ export function Hero() {
               <MessageCircle aria-hidden size={18} />
               Chamar no WhatsApp
             </ButtonLink>
-            <ButtonLink href="/contato#orcamento" variant="secondary">
+            <ButtonLink href="/atendimento" variant="secondary">
               Pedir orçamento
               <ArrowRight aria-hidden size={18} />
             </ButtonLink>
