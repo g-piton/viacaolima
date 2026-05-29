@@ -13,21 +13,21 @@ export function Hero() {
           fill
           loading="eager"
           fetchPriority="high"
-          className="object-cover opacity-[0.56]"
+          className="object-cover object-center opacity-[0.56] sm:object-[center_45%]"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-lima-black via-lima-black/78 to-lima-black/18" />
+        <div className="absolute inset-0 bg-gradient-to-t from-lima-black via-lima-black/82 to-lima-black/24 sm:bg-gradient-to-r sm:from-lima-black sm:via-lima-black/78 sm:to-lima-black/18" />
       </div>
 
-      <div className="relative mx-auto flex min-h-[calc(100vh-5rem)] max-w-7xl items-center px-4 py-20 sm:px-6 lg:px-8">
+      <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl items-end px-4 pb-36 pt-14 sm:min-h-[calc(100vh-5rem)] sm:items-center sm:px-6 sm:py-20 lg:px-8">
         <div className="max-w-3xl">
-          <p className="mb-5 inline-flex rounded-lg bg-white/12 px-3 py-2 text-sm font-bold text-white ring-1 ring-white/16">
+          <p className="mb-4 inline-flex max-w-full rounded-lg bg-white/12 px-3 py-2 text-xs font-bold text-white ring-1 ring-white/16 sm:mb-5 sm:text-sm">
             Transporte de passageiros desde 2020
           </p>
-          <h1 className="text-4xl font-black tracking-normal sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-black leading-tight tracking-normal sm:text-5xl lg:text-6xl">
             Viação Lima
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-100">
+          <p className="mt-5 max-w-2xl text-base leading-7 text-slate-100 sm:mt-6 sm:text-lg sm:leading-8">
             Fretamento intermunicipal, interestadual e internacional para
             empresas, grupos, turismo, eventos e deslocamentos sob medida.
           </p>

@@ -28,9 +28,9 @@ export function WhatsAppFloat() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex items-end gap-3">
+    <div className="fixed bottom-4 right-4 z-50 flex max-w-[calc(100vw-2rem)] items-end gap-2 sm:bottom-5 sm:right-5 sm:gap-3">
       {state !== "hidden" && state !== "initial" && (
-        <div className="relative mb-3 max-w-72 rounded-lg border border-slate-200 bg-white p-4 pr-10 text-base leading-7 text-slate-700 shadow-soft before:absolute before:-right-2 before:bottom-6 before:h-4 before:w-4 before:rotate-45 before:border-r before:border-t before:border-slate-200 before:bg-white">
+        <div className="relative mb-2 max-w-[calc(100vw-6.5rem)] rounded-lg border border-slate-200 bg-white p-3 pr-9 text-sm leading-6 text-slate-700 shadow-soft before:absolute before:-right-2 before:bottom-5 before:h-4 before:w-4 before:rotate-45 before:border-r before:border-t before:border-slate-200 before:bg-white sm:mb-3 sm:max-w-72 sm:p-4 sm:pr-10 sm:text-base sm:leading-7">
           {state === "message" && (
             <button
               type="button"
@@ -59,7 +59,7 @@ export function WhatsAppFloat() {
       <a
         href="/atendimento"
         aria-label="Abrir atendimento"
-        className="focus-ring inline-flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-lima-green bg-white shadow-soft transition hover:scale-105"
+        className="focus-ring inline-flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-lima-green bg-white shadow-soft transition hover:scale-105 sm:h-20 sm:w-20"
       >
         <Image
           src="/images/logo/assistant-avatar.png"

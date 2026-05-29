@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight, RotateCcw, Send } from "lucide-react";
+import type { CSSProperties } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type Field =
@@ -197,8 +198,8 @@ export function QuoteChat() {
 
   return (
     <div
-      className="flex max-h-[calc(100vh-9rem)] min-h-[22rem] flex-col rounded-lg border border-white/10 bg-white p-4 text-lima-black shadow-soft transition-[height] duration-500 sm:p-5 lg:max-h-[calc(100vh-11rem)]"
-      style={{ height: `${chatHeight}rem` }}
+      className="flex h-[min(calc(var(--chat-height)-6rem),calc(100svh-2rem))] max-h-[min(34rem,calc(100svh-2rem))] min-h-[15.5rem] flex-col rounded-lg border border-white/10 bg-white p-3 text-lima-black shadow-soft transition-[height] duration-500 sm:h-[var(--chat-height)] sm:min-h-[22rem] sm:p-5 lg:max-h-[calc(100vh-11rem)]"
+      style={{ "--chat-height": `${chatHeight}rem` } as CSSProperties}
     >
       <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-4">
         <div>
@@ -223,8 +224,8 @@ export function QuoteChat() {
             message.from === "bot" || message.from === "typing";
 
           return isAssistantMessage ? (
-            <div key={`${message.from}-${index}`} className="flex items-start gap-3">
-              <span className="relative mt-1 h-9 w-9 shrink-0 overflow-hidden rounded-full border-2 border-lima-green bg-white">
+            <div key={`${message.from}-${index}`} className="flex items-start gap-2 sm:gap-3">
+              <span className="relative mt-1 h-8 w-8 shrink-0 overflow-hidden rounded-full border-2 border-lima-green bg-white sm:h-9 sm:w-9">
                 <Image
                   src="/images/logo/assistant-avatar.png"
                   alt=""
@@ -233,7 +234,7 @@ export function QuoteChat() {
                   className="object-cover"
                 />
               </span>
-              <div className="mr-8 rounded-lg bg-slate-100 px-4 py-3 text-sm leading-6 text-slate-700">
+              <div className="mr-2 rounded-lg bg-slate-100 px-3 py-2.5 text-sm leading-6 text-slate-700 sm:mr-8 sm:px-4 sm:py-3">
                 {message.from === "typing" ? (
                   <span
                     className="inline-flex items-center gap-1"
@@ -251,7 +252,7 @@ export function QuoteChat() {
           ) : (
             <div
               key={`${message.from}-${index}`}
-              className="ml-12 rounded-lg bg-lima-light px-4 py-3 text-sm font-semibold leading-6 text-lima-dark"
+              className="ml-10 rounded-lg bg-lima-light px-3 py-2.5 text-sm font-semibold leading-6 text-lima-dark sm:ml-12 sm:px-4 sm:py-3"
             >
               {message.text}
             </div>
@@ -299,7 +300,7 @@ export function QuoteChat() {
               placeholder={currentStep.placeholder}
               inputMode={currentStep.field === "date" || currentStep.field === "passengers" ? "numeric" : "text"}
               disabled={isAssistantBusy}
-              className="focus-ring min-h-12 w-full rounded-lg border-slate-300 text-sm shadow-sm"
+              className="focus-ring min-h-12 w-full rounded-lg border-slate-300 px-3 text-base shadow-sm sm:text-sm"
             />
             <button
               type="submit"
