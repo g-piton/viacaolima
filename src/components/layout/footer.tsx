@@ -3,7 +3,7 @@ import { company } from "@/lib/constants";
 
 export function Footer() {
   return (
-    <footer className="bg-lima-black text-white">
+    <footer className="border-t border-white/10 bg-lima-black text-white">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <p className="font-bold">Contato</p>

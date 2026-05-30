@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 
 export default function AtendimentoPage() {
   return (
-    <section className="bg-lima-black text-white">
+    <section className="border-b border-white/10 bg-lima-black text-white">
       <div className="mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl gap-6 px-4 py-6 sm:min-h-[calc(100vh-5rem)] sm:px-6 sm:py-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-8 lg:px-8 lg:py-12">
-        <div className="lg:sticky lg:top-28">
+        <div>
           <Link
             href="/"
             className="focus-ring mb-6 inline-flex items-center gap-2 rounded-lg border border-white/15 px-4 py-3 text-sm font-bold text-white transition hover:bg-white/10 sm:mb-8"

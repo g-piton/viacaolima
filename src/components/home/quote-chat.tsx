@@ -103,6 +103,7 @@ export function QuoteChat() {
   );
   const scrollRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const waitingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentStep = steps[Math.min(stepIndex, steps.length - 1)];
@@ -148,6 +149,7 @@ export function QuoteChat() {
     }));
     setInput("");
     setAssistantState("waiting");
+    window.setTimeout(() => inputRef.current?.focus(), 0);
 
     waitingTimeoutRef.current = setTimeout(() => {
       setAssistantState("typing");
@@ -159,6 +161,7 @@ export function QuoteChat() {
           return next;
         });
         setAssistantState("idle");
+        window.setTimeout(() => inputRef.current?.focus(), 0);
       }, 2000);
     }, 2000);
   }
@@ -175,11 +178,18 @@ export function QuoteChat() {
     setStepIndex(0);
     setVisibleStepCount(1);
     setAssistantState("idle");
+    window.setTimeout(() => inputRef.current?.focus(), 0);
   }
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages]);
+
+  useEffect(() => {
+    if (!isDone) {
+      inputRef.current?.focus();
+    }
+  }, [currentStep.field, isDone]);
 
   useEffect(() => {
     return () => {
@@ -261,7 +271,7 @@ export function QuoteChat() {
         <div ref={endRef} />
       </div>
 
-      {!isDone && currentStep.options && (
+      {!isDone && currentStep.options && !answers[currentStep.field] && (
         <div className="mt-4 flex flex-wrap gap-2">
           {currentStep.options.map((option) => (
             <button
@@ -295,11 +305,12 @@ export function QuoteChat() {
             className="flex gap-2"
           >
             <input
+              ref={inputRef}
               value={input}
               onChange={(event) => handleInputChange(event.target.value)}
               placeholder={currentStep.placeholder}
               inputMode={currentStep.field === "date" || currentStep.field === "passengers" ? "numeric" : "text"}
-              disabled={isAssistantBusy}
+              readOnly={isAssistantBusy}
               className="focus-ring min-h-12 w-full rounded-lg border-slate-300 px-3 text-base shadow-sm sm:text-sm"
             />
             <button
