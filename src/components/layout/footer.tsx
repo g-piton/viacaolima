@@ -1,7 +1,16 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { Building2, Mail, Phone } from "lucide-react";
 import { company } from "@/lib/constants";
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname === "/atendimento") {
+    return null;
+  }
+
   return (
     <footer className="border-t border-white/10 bg-lima-black text-white">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">

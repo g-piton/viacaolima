@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight, RotateCcw, Send } from "lucide-react";
-import type { CSSProperties } from "react";
+import Link from "next/link";
+import { ArrowRight, Send, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type Field =
@@ -15,6 +15,7 @@ type Field =
   | "details";
 
 type AnswerMap = Record<Field, string>;
+type Message = { from: "bot" | "user" | "typing"; text: string };
 
 const initialAnswers: AnswerMap = {
   name: "",
@@ -35,7 +36,7 @@ const steps: Array<{
   {
     field: "name",
     question: "Para começar, qual é o seu nome?",
-    placeholder: "Seu nome"
+    placeholder: "Sua resposta..."
   },
   {
     field: "service",
@@ -102,31 +103,29 @@ export function QuoteChat() {
     "idle"
   );
   const scrollRef = useRef<HTMLDivElement>(null);
-  const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const waitingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentStep = steps[Math.min(stepIndex, steps.length - 1)];
   const isDone = stepIndex >= steps.length;
-  const chatHeight = Math.min(18 + visibleStepCount * 4.25, 34);
   const isAssistantBusy = assistantState !== "idle";
 
-  const messages = useMemo(() => {
+  const messages = useMemo<Message[]>(() => {
     const answered = steps
       .slice(0, visibleStepCount)
-      .flatMap((step, index) => {
-        const messagesForStep = [{ from: "bot", text: step.question }];
+      .flatMap<Message>((step, index) => {
+        const stepMessages: Message[] = [{ from: "bot", text: step.question }];
         const answer = answers[step.field];
 
         if (answer) {
-          messagesForStep.push({ from: "user", text: answer });
+          stepMessages.push({ from: "user", text: answer });
         }
 
         if (assistantState === "typing" && index === visibleStepCount - 1) {
-          messagesForStep.push({ from: "typing", text: "" });
+          stepMessages.push({ from: "typing", text: "" });
         }
 
-        return messagesForStep;
+        return stepMessages;
       });
 
     if (isDone && assistantState === "idle") {
@@ -170,21 +169,6 @@ export function QuoteChat() {
     }, 2000);
   }
 
-  function reset() {
-    if (waitingTimeoutRef.current) {
-      clearTimeout(waitingTimeoutRef.current);
-    }
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-    setAnswers(initialAnswers);
-    setInput("");
-    setStepIndex(0);
-    setVisibleStepCount(1);
-    setAssistantState("idle");
-    window.setTimeout(focusInput, 0);
-  }
-
   useEffect(() => {
     const scrollElement = scrollRef.current;
 
@@ -218,124 +202,147 @@ export function QuoteChat() {
   }
 
   return (
-    <div
-      className="flex h-[min(calc(var(--chat-height)-6rem),calc(100svh-2rem))] max-h-[min(34rem,calc(100svh-2rem))] min-h-[15.5rem] flex-col rounded-lg border border-white/10 bg-white p-3 text-lima-black shadow-soft transition-[height] duration-500 sm:h-[var(--chat-height)] sm:min-h-[22rem] sm:p-5 lg:max-h-[calc(100vh-11rem)]"
-      style={{ "--chat-height": `${chatHeight}rem` } as CSSProperties}
-    >
-      <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-4">
-        <div>
-          <p className="text-sm font-black">Atendimento de orçamento</p>
-          <p className="text-xs font-semibold text-slate-500">
-            Atendimento Viação Lima
-          </p>
+    <div className="flex h-svh min-h-svh flex-col bg-white text-lima-black">
+      <header className="flex items-center justify-between gap-4 bg-lima-dark px-4 py-4 text-white shadow-sm sm:px-6">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+          <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-white bg-white sm:h-16 sm:w-16">
+            <Image
+              src="/images/logo/assistant-avatar.png"
+              alt=""
+              fill
+              priority
+              sizes="64px"
+              className="object-cover"
+            />
+          </span>
+          <div className="min-w-0">
+            <p className="truncate text-xl font-black leading-tight sm:text-2xl">
+              Lima - Atendimento
+            </p>
+            <p className="mt-1 text-sm font-semibold text-white/85 sm:text-base">
+              Online agora
+            </p>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={reset}
-          className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-50"
-          aria-label="Reiniciar atendimento"
+        <Link
+          href="/"
+          className="focus-ring inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white/80 text-white transition hover:bg-white hover:text-lima-dark"
+          aria-label="Voltar para a tela inicial"
         >
-          <RotateCcw aria-hidden size={17} />
-        </button>
-      </div>
+          <X aria-hidden size={22} />
+        </Link>
+      </header>
 
-      <div ref={scrollRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
+      <div
+        ref={scrollRef}
+        className="mx-auto flex w-full max-w-3xl flex-1 flex-col space-y-5 overflow-y-auto px-4 py-8 sm:px-6 sm:py-10"
+      >
         {messages.map((message, index) => {
           const isAssistantMessage =
             message.from === "bot" || message.from === "typing";
 
-          return isAssistantMessage ? (
-            <div key={`${message.from}-${index}`} className="flex items-start gap-2 sm:gap-3">
-              <span className="relative mt-1 h-8 w-8 shrink-0 overflow-hidden rounded-full border-2 border-lima-green bg-white sm:h-9 sm:w-9">
-                <Image
-                  src="/images/logo/assistant-avatar.png"
-                  alt=""
-                  fill
-                  sizes="36px"
-                  className="object-cover"
-                />
-              </span>
-              <div className="mr-2 rounded-lg bg-slate-100 px-3 py-2.5 text-sm leading-6 text-slate-700 sm:mr-8 sm:px-4 sm:py-3">
-                {message.from === "typing" ? (
-                  <span
-                    className="inline-flex items-center gap-1"
-                    aria-label="Digitando"
-                  >
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-slate-500 [animation-delay:-0.2s]" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-slate-500 [animation-delay:-0.1s]" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-slate-500" />
-                  </span>
-                ) : (
-                  message.text
-                )}
+          if (isAssistantMessage) {
+            return (
+              <div key={`${message.from}-${index}`} className="flex items-start gap-3">
+                <span className="relative mt-1 h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-lima-green bg-white sm:h-11 sm:w-11">
+                  <Image
+                    src="/images/logo/assistant-avatar.png"
+                    alt=""
+                    fill
+                    sizes="44px"
+                    className="object-cover"
+                  />
+                </span>
+                <div className="max-w-[78%] rounded-[1.75rem] bg-slate-100 px-5 py-4 text-base leading-7 text-slate-900 shadow-sm sm:max-w-[70%] sm:text-lg">
+                  {message.from === "typing" ? (
+                    <span
+                      className="inline-flex min-w-12 items-center justify-center gap-1"
+                      aria-label="Digitando"
+                    >
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-slate-500 [animation-delay:-0.2s]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-slate-500 [animation-delay:-0.1s]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-slate-500" />
+                    </span>
+                  ) : (
+                    message.text
+                  )}
+                </div>
               </div>
-            </div>
-          ) : (
+            );
+          }
+
+          return (
             <div
               key={`${message.from}-${index}`}
-              className="ml-10 rounded-lg bg-lima-light px-3 py-2.5 text-sm font-semibold leading-6 text-lima-dark sm:ml-12 sm:px-4 sm:py-3"
+              className="ml-auto max-w-[78%] rounded-[1.75rem] bg-lima-green px-5 py-4 text-base font-semibold leading-7 text-lima-black shadow-sm sm:max-w-[70%] sm:text-lg"
             >
               {message.text}
             </div>
           );
         })}
-        <div ref={endRef} />
       </div>
 
-      {!isDone && currentStep.options && !answers[currentStep.field] && (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {currentStep.options.map((option) => (
-            <button
-              key={option}
-              type="button"
-              onClick={() => submit(option)}
-              disabled={isAssistantBusy}
-              className="focus-ring rounded-lg border border-lima-dark/15 px-3 py-2 text-xs font-bold text-lima-dark transition hover:bg-lima-light"
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="border-t border-slate-100 bg-white px-4 py-4 sm:px-6">
+        <div className="mx-auto w-full max-w-3xl">
+          {!isDone && currentStep.options && !answers[currentStep.field] && (
+            <div className="mb-3 flex flex-wrap gap-2">
+              {currentStep.options.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => submit(option)}
+                  disabled={isAssistantBusy}
+                  className="focus-ring rounded-full border border-lima-dark/15 px-4 py-2 text-sm font-bold text-lima-dark transition hover:bg-lima-light disabled:opacity-60"
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          )}
 
-      <div className="mt-4">
-        {isDone ? (
-          <a
-            href={buildWhatsappUrl(answers)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="focus-ring inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-lima-green px-5 py-3 text-sm font-black text-lima-black transition hover:bg-lima-dark hover:text-white"
-          >
-            Abrir conversa no WhatsApp
-            <Send aria-hidden size={18} />
-          </a>
-        ) : (
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              submit();
-            }}
-            className="flex gap-2"
-          >
-            <input
-              ref={inputRef}
-              value={input}
-              onChange={(event) => handleInputChange(event.target.value)}
-              placeholder={currentStep.placeholder}
-              inputMode={currentStep.field === "date" || currentStep.field === "passengers" ? "numeric" : "text"}
-              readOnly={isAssistantBusy}
-              className="focus-ring min-h-12 w-full rounded-lg border-slate-300 px-3 text-base shadow-sm sm:text-sm"
-            />
-            <button
-              type="submit"
-              disabled={isAssistantBusy}
-              className="focus-ring inline-flex min-h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-lima-green text-lima-black transition hover:bg-lima-dark hover:text-white"
-              aria-label="Enviar resposta"
+          {isDone ? (
+            <a
+              href={buildWhatsappUrl(answers)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="focus-ring inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-full bg-lima-green px-6 py-4 text-base font-black text-lima-black transition hover:bg-lima-dark hover:text-white"
             >
-              <ArrowRight aria-hidden size={18} />
-            </button>
-          </form>
-        )}
+              Abrir conversa no WhatsApp
+              <Send aria-hidden size={18} />
+            </a>
+          ) : (
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                submit();
+              }}
+              className="flex items-center gap-2"
+            >
+              <input
+                ref={inputRef}
+                value={input}
+                onChange={(event) => handleInputChange(event.target.value)}
+                placeholder={currentStep.placeholder}
+                inputMode={
+                  currentStep.field === "date" ||
+                  currentStep.field === "passengers"
+                    ? "numeric"
+                    : "text"
+                }
+                readOnly={isAssistantBusy}
+                className="focus-ring min-h-14 w-full rounded-full border-2 border-lima-green px-5 text-base shadow-sm"
+              />
+              <button
+                type="submit"
+                disabled={isAssistantBusy}
+                className="focus-ring inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-lima-green text-lima-black transition hover:bg-lima-dark hover:text-white disabled:opacity-70"
+                aria-label="Enviar resposta"
+              >
+                <ArrowRight aria-hidden size={24} />
+              </button>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

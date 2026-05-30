@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { WhatsAppFloat } from "@/components/layout/whatsapp-float";
+import { Header } from "../components/layout/header";
+import { Footer } from "../components/layout/footer";
+import { WhatsAppFloat } from "../components/layout/whatsapp-float";
 
 const inter = Inter({
   subsets: ["latin"],

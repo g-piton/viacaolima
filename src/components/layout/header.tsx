@@ -1,8 +1,17 @@
-import Link from "next/link";
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { company } from "@/lib/constants";
 
 export function Header() {
+  const pathname = usePathname();
+
+  if (pathname === "/atendimento") {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
       <nav
