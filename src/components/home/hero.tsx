@@ -32,7 +32,12 @@ export function Hero() {
             empresas, grupos, turismo, eventos e deslocamentos sob medida.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href={company.whatsappHref} className="sm:w-auto">
+            <ButtonLink
+              href={company.whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="sm:w-auto"
+            >
               <MessageCircle aria-hidden size={18} />
               Chamar no WhatsApp
             </ButtonLink>

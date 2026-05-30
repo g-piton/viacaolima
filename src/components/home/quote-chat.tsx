@@ -302,6 +302,8 @@ export function QuoteChat() {
         {isDone ? (
           <a
             href={buildWhatsappUrl(answers)}
+            target="_blank"
+            rel="noopener noreferrer"
             className="focus-ring inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-lima-green px-5 py-3 text-sm font-black text-lima-black transition hover:bg-lima-dark hover:text-white"
           >
             Abrir conversa no WhatsApp
