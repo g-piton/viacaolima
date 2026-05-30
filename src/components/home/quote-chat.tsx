@@ -139,6 +139,10 @@ export function QuoteChat() {
     return answered;
   }, [answers, assistantState, isDone, visibleStepCount]);
 
+  function focusInput() {
+    inputRef.current?.focus({ preventScroll: true });
+  }
+
   function submit(value = input) {
     const trimmed = value.trim();
     if (!trimmed || isDone || isAssistantBusy) return;
@@ -149,7 +153,7 @@ export function QuoteChat() {
     }));
     setInput("");
     setAssistantState("waiting");
-    window.setTimeout(() => inputRef.current?.focus(), 0);
+    window.setTimeout(focusInput, 0);
 
     waitingTimeoutRef.current = setTimeout(() => {
       setAssistantState("typing");
@@ -161,7 +165,7 @@ export function QuoteChat() {
           return next;
         });
         setAssistantState("idle");
-        window.setTimeout(() => inputRef.current?.focus(), 0);
+        window.setTimeout(focusInput, 0);
       }, 2000);
     }, 2000);
   }
@@ -178,16 +182,23 @@ export function QuoteChat() {
     setStepIndex(0);
     setVisibleStepCount(1);
     setAssistantState("idle");
-    window.setTimeout(() => inputRef.current?.focus(), 0);
+    window.setTimeout(focusInput, 0);
   }
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    const scrollElement = scrollRef.current;
+
+    if (!scrollElement) return;
+
+    scrollElement.scrollTo({
+      top: scrollElement.scrollHeight,
+      behavior: "smooth"
+    });
   }, [messages]);
 
   useEffect(() => {
     if (!isDone) {
-      inputRef.current?.focus();
+      focusInput();
     }
   }, [currentStep.field, isDone]);
 
